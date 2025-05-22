@@ -1,0 +1,71 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - check_link_safety
+  - provide_link
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+
+responses:
+  utter_greet:
+    - text: "Hello! I can help you check if a link is safe. What link would you like me to analyze?"
+    - text: "Hi there! If you have a link that you're unsure about, just share it with me and I'll check its safety."
+    - text: "Hey there! Paste a link if you want me to check it for you."
+    - text: "Hi! I'm KalasagAI, your phishing shield. Got something suspicious?"
+
+  utter_happy:
+    - text: "I'm glad you're feeling good!"
+
+  utter_did_that_help:
+    - text: "Did that help?"
+
+  utter_iamabot:
+    - text: "I am a bot, here to help!"
+
+  utter_cheer_up:
+    - text: "Cheer up! You're doing great. 💪"
+
+  utter_ask_link:
+    - text: "Please share the link you'd like me to check."
+
+  utter_analyzing_link:
+    - text: "I'm analyzing this link for potential security threats..."
+    - text: "Let me take a moment to check this link for you."
+
+  utter_link_safe:
+    - text: "This link appears to be safe. It's from a legitimate source."
+    - text: "I've checked this link and it seems secure. You can proceed safely."
+    - text: "After verifying, I can confirm that this link is safe to visit."
+    - text: "This link is safe. You can click on it without any worries."
+
+  utter_link_unsafe:
+    - text: "⚠️ Warning: This link appears to be suspicious and might be a phishing attempt."
+    - text: "This message seems to contain a link designed to steal sensitive information. Be careful!"
+    - text: "This link is unsafe. Banks don't ask for sensitive information via email or SMS, so be cautious."
+
+  utter_link_unknown:
+    - text: "🔍 This appears to be a new or unknown link. Let me analyze it further..."
+    - text: "I haven't seen this pattern before. Give me a moment to review it carefully."
+    - text: "This link seems to be unregistered or not widely recognized. I'll check it out for you."
+
+  utter_goodbye:
+    - text: "Stay safe! Let me know if you need to check any other links."
+    - text: "Stay safe online! Let me know if you get another sketchy link."
+    - text: "Goodbye! Always think twice before clicking strange links."
+
+slots:
+  last_link:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+        name: last_link
+        value: "{last_link}"
+
+
+actions:
+  - action_check_link_safety
