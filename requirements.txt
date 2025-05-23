@@ -3,3 +3,4 @@ git+https://github.com/RasaHQ/rasa-sdk.git@3.5.1
 transformers
 torch>=2.0.0
 requests
+tensorflow==2.11.1
