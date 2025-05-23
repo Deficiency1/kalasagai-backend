@@ -1,0 +1,6 @@
+# .dockerignore
+.venv
+__pycache__
+models
+.rasa/cache
+.git
