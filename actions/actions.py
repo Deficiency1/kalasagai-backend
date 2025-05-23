@@ -114,10 +114,9 @@ class ActionCheckLinkSafety(Action):
         parsed = urlparse(url_to_check)
         domain_name = parsed.netloc or parsed.path.split("/")[0]
         lookalike_flag = is_lookalike(domain_name)
-        pattern_flag = any(
-            kw in domain_name.lower() for kw in ["login","verify","secure","update","free","bonus"]
-        ) or any(
-            domain_name.lower().endswith(tld) for tld in [".xyz",".ly",".tk",".ru",".top",".buzz"]
+        pattern_flag = (
+            any(kw in domain_name.lower() for kw in ["login","verify","secure","update","free","bonus"])  
+            or any(domain_name.lower().endswith(tld) for tld in [".xyz",".ly",".tk",".ru",".top",".buzz"])
         )
 
         if lookalike_flag:
@@ -125,7 +124,7 @@ class ActionCheckLinkSafety(Action):
         if pattern_flag:
             vt_result += " 🚩 Suspicious pattern detected in domain name."
 
-        # 6️⃣ Build advice (T5 first, then heuristics)
+        # 6️⃣ Build advice
         lower_t5 = t5_result.lower()
         if "bank" in lower_t5:
             advice = "🚫 A bank would never send sensitive links. This is likely a scam."
@@ -140,13 +139,23 @@ class ActionCheckLinkSafety(Action):
         else:
             advice = "🔍 Be cautious. This could be phishing. Don’t click unless you’re sure."
 
-        # 7️⃣ Send the final consolidated response
-        final_message = (
-            f"🧠 *Phishing Technique Identified*: {t5_result}\n\n"
-            f"🔗 *URL Check*: {vt_result}\n\n"
-            f"🛠 *Advice*: {advice}"
-        )
-        dispatcher.utter_message(text=final_message)
+        # 📍 helper to wrap text in a colored <span>
+        def color(text: str, c: str) -> str:
+            return f"<span style='color:{c};'>{text}</span>"
 
-        # 8️⃣ Optionally store the last link for follow-up
+        # decide if advice is a “warning”
+        is_warning = any(icon in advice for icon in ("⚠️", "🚩"))
+        advice_color = "red" if is_warning else "black"
+
+        # 7️⃣ Final HTML message with bubble wrapper
+        final_html = (
+            f"<div class='bot-bubble'>"
+            f"🧠 <strong>Phishing Technique Identified</strong>: {color(t5_result, 'black')}<br/><br/>"
+            f"🔗 <strong>URL Check</strong>: {color(vt_result, 'black')}<br/><br/>"
+            f"🛠 <strong>Advice</strong>: {color(advice, advice_color)}"
+            f"</div>"
+        )
+        dispatcher.utter_message(text=final_html, disable_sanitization=True)
+
+        # 8️⃣ Store the last link for follow-up
         return [SlotSet("last_link", domain_name)]
